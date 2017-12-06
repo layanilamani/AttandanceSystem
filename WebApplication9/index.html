@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet" />
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script>
+        function GetBatches() {
+            //
+        }
+
+        function GetStudentsByBatch(batch) {
+            //
+        }
+        
+        function MarkAttandance() {
+            //
+        }
+    </script>
+</head>
+<body onload="GetBatches()">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Attandance System</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Batch</label>
+                    <select class="form-control" onchange="GetStudentsByBatch(this)">
+                        <option value="-1">Select..</option>
+                        <option value="987546">987546</option>
+                        <option value="875458">875458</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input class="form-control" type="date" name="date" value="" />
+                </div>
+            </div>
+        </div>
+        <div class="row">           
+            <div class="col-md-12">
+                <h2>Students</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" name="selectall" value="true" /></th>
+                            <th><label>Name</label></th>
+                            <th><label>Enrollment No</label></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" name="selectall" value="true" /></td>
+                            <td>Ali</td>
+                            <td>343433</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" name="selectall" value="true" /></td>
+                            <td>Ali</td>
+                            <td>343433</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" >
+            <div class="col-md-10">
+                <button class="btn btn-block btn-default">
+                    Mark Attandance
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
