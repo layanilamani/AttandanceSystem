@@ -14,12 +14,16 @@ namespace MiniAttandanceSystem.Controllers
         [Route("api/GetAllBatches")]
         public List<Batch> GetAllBatches()
         {
+            db.Configuration.ProxyCreationEnabled = false;
             return db.Batches.ToList();
         }
 
-        //public List<Student> GetStudntsByBatch(string batch)
-        //{
-           
-        //}
+        
+        [Route("api/GetStudntsByBatch/{batch}")]
+        public List<Student> GetStudntsByBatch(string batch)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            return db.Students.Where(s => s.Batch.BatchCode == batch).ToList();
+        }
     }
 }
