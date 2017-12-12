@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace MiniAttandanceSystem.Controllers
 {
-    public class BatchController : ApiController
+   public class BatchController : ApiController
     {
         MiniAttandanceSystemEntities db = new MiniAttandanceSystemEntities();
 
@@ -18,12 +18,11 @@ namespace MiniAttandanceSystem.Controllers
             return db.Batches.ToList();
         }
 
-        
-        [Route("api/GetStudntsByBatch/{batch}")]
-        public List<Student> GetStudntsByBatch(string batch)
+        [Route("api/GetStudents/{batch}")]
+        public List<Student> GetStudents(string batch)
         {
             db.Configuration.ProxyCreationEnabled = false;
-            return db.Students.Where(s => s.Batch.BatchCode == batch).ToList();
+            return db.Students.Where(s => s.Batch.Name == batch).ToList();
         }
     }
 }
