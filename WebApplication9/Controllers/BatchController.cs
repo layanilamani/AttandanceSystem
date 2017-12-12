@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace MiniAttandanceSystem.Controllers
 {
-   public class BatchController : ApiController
+    public class BatchController : ApiController
     {
         MiniAttandanceSystemEntities db = new MiniAttandanceSystemEntities();
 
