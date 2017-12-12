@@ -1,82 +1,145 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <title></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="Content/bootstrap.min.css" rel="stylesheet" />
-    <link href="Content/bootstrap-theme.min.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.css" rel="stylesheet" />
+
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
+    <script type="text/html" id="tabletemplate">
+        <tr>
+            <td>
+                <input type="checkbox" name="sid[]" value="{{Id}}" />
+            </td>
+            <td>{{Name}}</td>
+        </tr>
+    </script>
+
+    <!-- Tareeqa no 2 -->
+    <!--<script type="text/html" id="optiontemplate">
+        <option value="{{batchcode}}">{{batchcode}}</option>
+    </script>-->
     <script>
-        function GetBatches() {
-            //
+        function GetAllBatches() {
+            /// ssaray batches server say laa kar drop down may show kar do.
+
+            var batchddl = document.getElementById('batchddl');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("Get", "api/GetAllBatches");
+
+            xhr.onload = function () {
+
+                if (xhr.response && xhr.response != '') {
+                    var batches = JSON.parse(xhr.response);
+
+                    for (var i = 0; i < batches.length; i++) {
+
+                        var batch = batches[i].Name;
+
+                        batchddl.innerHTML += '<option value="' + batch + '">' + batch + '</option>';
+                    }
+                }
+            };
+            xhr.send();
+
+            //var batches = [
+            //    { batch: 'ipro-201412E', id: 1 },
+            //    { batch: 'ipro-201503C', id: 2 },
+            //    { batch: 'ipro-201608B', id: 3 },
+            //];
+
+
+            ///tareeqa no 2
+            //var template = document.getElementById('optiontemplate').innerHTML;
+            //batchddl.innerHTML +=  template.replace('{{batchcode}}', batch).replace('{{batchcode}}', batch);
+
+
+
+            ///pehla tareeqa
+            //var option1 = document.createElement('option');
+            //option1.value = batch;
+            //option1.text = batch;
+
+            //batchddl.appendChild(option1);
+        }
+        $(document).ready(function () {
+
+            // jaisay hi poage load ho jai poora. tu forun
+            //yeh neechay wala function call ho jai.
+            GetAllBatches()
+        });
+
+        function batch_onchange(batchddl) {
+            // jaisay hi batch kay drop down say batch change ho ga.
+            // hum uss batch kay students ko server say lay aain gay.
+            //oor hum table may tr td bana kay saaray students ko show kar day gain.
+
+            var selectedbatch = batchddl.value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("Get", "api/GetStudents/" + batchddl.value);         
+
+
+            xhr.onload = function ()
+            {
+                if (xhr.response && xhr.response != '') {
+                    var tabletemplate = document.getElementById('tabletemplate').innerHTML;
+                    
+                    var studenttbody = document.getElementById('studenttbody');
+                    var students = JSON.parse(xhr.response);
+                    studenttbody.innerHTML = "";
+                    for (var i = 0; i < students.length; i++) {
+                        var student = students[i];                      
+
+                        studenttbody.innerHTML += tabletemplate.replace('{{Id}}', student.Id).replace('{{Name}}', student.Name);
+                    }
+                }
+            };
+            xhr.send();
         }
 
-        function GetStudentsByBatch(batch) {
-            //
-        }
-        
         function MarkAttandance() {
-            //
+            //saary woh students jinn ko aap nay check box say select kia hay.
+            // unn ko post kar do do sever per takay unhen ki attandacne mark ho jai.
+
         }
+
+
     </script>
 </head>
-<body onload="GetBatches()">
+<body>
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Attandance System</h1>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
                     <label>Batch</label>
-                    <select class="form-control" onchange="GetStudentsByBatch(this)">
+                    <select onchange="batch_onchange(this)" id="batchddl" class="form-control">
                         <option value="-1">Select..</option>
-                        <option value="987546">987546</option>
-                        <option value="875458">875458</option>
                     </select>
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label>Date</label>
-                    <input class="form-control" type="date" name="date" value="" />
-                </div>
-            </div>
         </div>
-        <div class="row">           
+        <div class="row">
             <div class="col-md-12">
-                <h2>Students</h2>
-                <table class="table table-bordered">
+                <table class="table table-responsive table-bordered">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" name="selectall" value="true" /></th>
-                            <th><label>Name</label></th>
-                            <th><label>Enrollment No</label></th>
+                            <th><input type="checkbox" name="selectall" value="" /></th>
+                            <th>Name</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="checkbox" name="selectall" value="true" /></td>
-                            <td>Ali</td>
-                            <td>343433</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="selectall" value="true" /></td>
-                            <td>Ali</td>
-                            <td>343433</td>
-                        </tr>
+                    <tbody id="studenttbody">
+
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="row" >
-            <div class="col-md-10">
-                <button class="btn btn-block btn-default">
-                    Mark Attandance
-                </button>
+        <div class="row">
+            <div class="col-md-12">
+                <input type="button" class="btn-primary btn btn-block" name="name" value="Mark Attandance" />
             </div>
         </div>
     </div>
