@@ -18,11 +18,32 @@ namespace MiniAttandanceSystem.Controllers
             return db.Batches.ToList();
         }
 
-        [Route("api/GetStudents/{batch}")]
-        public List<Student> GetStudents(string batch)
+        [HttpGet]
+        [Route("api/GetStudntsByBatch/{batch}")]
+        public List<Student> GetStudntsByBatch(string batch)
         {
             db.Configuration.ProxyCreationEnabled = false;
-            return db.Students.Where(s => s.Batch.Name == batch).ToList();
+            return db.Students.Where(s => s.Batch.BatchCode == batch).ToList();
+        }
+
+        [HttpGet]
+        [Route("api/MarkAttandance/{sid}")]
+        public string MarkAttandance(string sid)
+        {
+            var students = sid.Split(',').Select(s => Convert.ToInt32(s));
+
+            foreach (var item in students)
+            {
+                var sa = new StudentAttandance();
+                sa.StudentId = item;
+                sa.AttandanceDate = DateTime.Now;
+
+                db.StudentAttandances.Add(sa);               
+            }
+
+            db.SaveChanges();
+
+            return "done";
         }
     }
 }
