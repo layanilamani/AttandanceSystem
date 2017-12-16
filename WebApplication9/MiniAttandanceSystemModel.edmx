@@ -10,32 +10,58 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="BatchCode" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="StudentAttandances">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StudentId" Type="int" />
+          <Property Name="AttandanceDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Students">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="50" />
-          <Property Name="BatchId" Type="int" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="EnrollmentNo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Batch_Id" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Students_Batches">
-          <End Role="Batches" Type="Self.Batches" Multiplicity="0..1" />
+        <Association Name="FK_StudentAttandances_Students">
+          <End Role="Students" Type="Self.Students" Multiplicity="0..1" />
+          <End Role="StudentAttandances" Type="Self.StudentAttandances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Students">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StudentAttandances">
+              <PropertyRef Name="StudentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentBatch">
+          <End Role="Batches" Type="Self.Batches" Multiplicity="1" />
           <End Role="Students" Type="Self.Students" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Batches">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Students">
-              <PropertyRef Name="BatchId" />
+              <PropertyRef Name="Batch_Id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MiniAttandanceSystemModelStoreContainer">
           <EntitySet Name="Batches" EntityType="Self.Batches" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StudentAttandances" EntityType="Self.StudentAttandances" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Students" EntityType="Self.Students" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Students_Batches" Association="Self.FK_Students_Batches">
+          <AssociationSet Name="FK_StudentAttandances_Students" Association="Self.FK_StudentAttandances_Students">
+            <End Role="Students" EntitySet="Students" />
+            <End Role="StudentAttandances" EntitySet="StudentAttandances" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentBatch" Association="Self.FK_StudentBatch">
             <End Role="Batches" EntitySet="Batches" />
             <End Role="Students" EntitySet="Students" />
           </AssociationSet>
@@ -44,12 +70,25 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MiniAttandanceSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Batch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BatchCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Students" Relationship="MiniAttandanceSystemModel.StudentBatch" FromRole="Batch" ToRole="Student" />
+        </EntityType>
         <EntityContainer Name="MiniAttandanceSystemEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Batches" EntityType="Self.Batch" />
           <EntitySet Name="Students" EntityType="MiniAttandanceSystemModel.Student" />
-          <EntitySet Name="Batches" EntityType="MiniAttandanceSystemModel.Batch" />
-          <AssociationSet Name="FK_Students_Batches" Association="MiniAttandanceSystemModel.FK_Students_Batches">
-            <End Role="Batch" EntitySet="Batches" />
+          <AssociationSet Name="StudentBatch" Association="MiniAttandanceSystemModel.StudentBatch">
             <End Role="Student" EntitySet="Students" />
+            <End Role="Batch" EntitySet="Batches" />
+          </AssociationSet>
+          <EntitySet Name="StudentAttandances" EntityType="MiniAttandanceSystemModel.StudentAttandance" />
+          <AssociationSet Name="FK_StudentAttandances_Students" Association="MiniAttandanceSystemModel.FK_StudentAttandances_Students">
+            <End Role="Student" EntitySet="Students" />
+            <End Role="StudentAttandance" EntitySet="StudentAttandances" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Student">
@@ -57,27 +96,33 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BatchId" Type="Int32" />
-          <NavigationProperty Name="Batch" Relationship="MiniAttandanceSystemModel.FK_Students_Batches" FromRole="Student" ToRole="Batch" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="EnrollmentNo" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Batch" Relationship="MiniAttandanceSystemModel.StudentBatch" FromRole="Student" ToRole="Batch" />
+          <NavigationProperty Name="StudentAttandances" Relationship="MiniAttandanceSystemModel.FK_StudentAttandances_Students" FromRole="Student" ToRole="StudentAttandance" />
         </EntityType>
-        <EntityType Name="Batch">
+        <Association Name="StudentBatch">
+          <End Type="MiniAttandanceSystemModel.Student" Role="Student" Multiplicity="*" />
+          <End Type="MiniAttandanceSystemModel.Batch" Role="Batch" Multiplicity="1" />
+        </Association>
+        <EntityType Name="StudentAttandance">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Students" Relationship="MiniAttandanceSystemModel.FK_Students_Batches" FromRole="Batch" ToRole="Student" />
+          <Property Name="StudentId" Type="Int32" />
+          <Property Name="AttandanceDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Student" Relationship="MiniAttandanceSystemModel.FK_StudentAttandances_Students" FromRole="StudentAttandance" ToRole="Student" />
         </EntityType>
-        <Association Name="FK_Students_Batches">
-          <End Type="MiniAttandanceSystemModel.Batch" Role="Batch" Multiplicity="0..1" />
-          <End Type="MiniAttandanceSystemModel.Student" Role="Student" Multiplicity="*" />
+        <Association Name="FK_StudentAttandances_Students">
+          <End Type="MiniAttandanceSystemModel.Student" Role="Student" Multiplicity="0..1" />
+          <End Type="MiniAttandanceSystemModel.StudentAttandance" Role="StudentAttandance" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Batch">
+            <Principal Role="Student">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Student">
-              <PropertyRef Name="BatchId" />
+            <Dependent Role="StudentAttandance">
+              <PropertyRef Name="StudentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -85,28 +130,44 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="MiniAttandanceSystemModelStoreContainer" CdmEntityContainer="MiniAttandanceSystemEntities">
-          <EntitySetMapping Name="Students">
-            <EntityTypeMapping TypeName="MiniAttandanceSystemModel.Student">
-              <MappingFragment StoreEntitySet="Students">
-                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MiniAttandanceSystemModelStoreContainer" CdmEntityContainer="MiniAttandanceSystemEntities">
+    <EntitySetMapping Name="Batches">
+      <EntityTypeMapping TypeName="IsTypeOf(MiniAttandanceSystemModel.Batch)">
+        <MappingFragment StoreEntitySet="Batches">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="BatchCode" ColumnName="BatchCode" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Students">
+      <EntityTypeMapping TypeName="IsTypeOf(MiniAttandanceSystemModel.Student)">
+        <MappingFragment StoreEntitySet="Students">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="EnrollmentNo" ColumnName="EnrollmentNo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="StudentBatch" TypeName="MiniAttandanceSystemModel.StudentBatch" StoreEntitySet="Students">
+      <EndProperty Name="Batch">
+        <ScalarProperty Name="Id" ColumnName="Batch_Id" />
+      </EndProperty>
+      <EndProperty Name="Student">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+          <EntitySetMapping Name="StudentAttandances">
+            <EntityTypeMapping TypeName="MiniAttandanceSystemModel.StudentAttandance">
+              <MappingFragment StoreEntitySet="StudentAttandances">
+                <ScalarProperty Name="AttandanceDate" ColumnName="AttandanceDate" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Batches">
-            <EntityTypeMapping TypeName="MiniAttandanceSystemModel.Batch">
-              <MappingFragment StoreEntitySet="Batches">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
@@ -120,7 +181,7 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="true" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
-        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
       </DesignerInfoPropertySet>
     </Options>

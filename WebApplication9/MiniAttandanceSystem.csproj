@@ -126,6 +126,7 @@
     <Content Include="MiniAttandanceSystemModel.edmx.diagram">
       <DependentUpon>MiniAttandanceSystemModel.edmx</DependentUpon>
     </Content>
+    <Content Include="MiniAttandanceSystemModel.edmx.sql" />
     <Content Include="MiniAttandanceSystemModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>MiniAttandanceSystemModel.edmx</DependentUpon>
@@ -166,6 +167,9 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Student.cs">
+      <DependentUpon>MiniAttandanceSystemModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StudentAttandance.cs">
       <DependentUpon>MiniAttandanceSystemModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>

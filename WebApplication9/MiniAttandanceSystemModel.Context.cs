@@ -32,9 +32,11 @@ public partial class MiniAttandanceSystemEntities : DbContext
     }
 
 
+    public DbSet<Batch> Batches { get; set; }
+
     public DbSet<Student> Students { get; set; }
 
-    public DbSet<Batch> Batches { get; set; }
+    public DbSet<StudentAttandance> StudentAttandances { get; set; }
 
 }
 

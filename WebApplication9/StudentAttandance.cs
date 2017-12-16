@@ -15,28 +15,18 @@ namespace MiniAttandanceSystem
 using System;
     using System.Collections.Generic;
     
-public partial class Student
+public partial class StudentAttandance
 {
-
-    public Student()
-    {
-
-        this.StudentAttandances = new HashSet<StudentAttandance>();
-
-    }
-
 
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public Nullable<int> StudentId { get; set; }
 
-    public string EnrollmentNo { get; set; }
+    public Nullable<System.DateTime> AttandanceDate { get; set; }
 
 
 
-    public virtual Batch Batch { get; set; }
-
-    public virtual ICollection<StudentAttandance> StudentAttandances { get; set; }
+    public virtual Student Student { get; set; }
 
 }
 
